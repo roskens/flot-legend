@@ -1,6 +1,6 @@
 function tokenizeStatement(value) {
 
-    var stack = [], tokens = [], types = {}, lfRegex = /^%(\d*)(\.(\d+))?lf/;
+    var stack = [], tokens = [], types = {}, lfRegex = /^%(\-)?(\d*)(\.(\d+))?lf/;
 
     var accountForTokenType = function(type) {
         if (types.hasOwnProperty(type)) {
@@ -79,20 +79,22 @@ function tokenizeStatement(value) {
             i++;
         } else if ( (match = lfRegex.exec(value.slice(i))) !== null) {
             var length = NaN;
+            var fill = match[1] === '-' ? '<' : '>';
             try {
-                length = parseInt(match[1]);
+                length = parseInt(match[2]);
             } catch(err) {
                 // pass
             }
             var precision = NaN;
             try {
-                precision = parseInt(match[3]);
+                precision = parseInt(match[4]);
             } catch(err) {
                 // pass
             }
 
             pushToken({
                 type: TOKENS.Lf,
+                fill: fill,
                 length: isNaN(length) ? null : length,
                 precision: isNaN(precision) ? null : precision
             });
@@ -265,6 +267,9 @@ function renderStatement(statement, series, renderer) {
             }
 
             var format = "";
+            if (token.fill !== null) {
+                format += token.fill;
+            }
             if (token.length !== null) {
                 format += token.length;
             }
