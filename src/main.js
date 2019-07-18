@@ -79,7 +79,7 @@ function tokenizeStatement(value) {
             i++;
         } else if ( (match = lfRegex.exec(value.slice(i))) !== null) {
             var length = NaN;
-            var fill = match[1] === '-' ? '<' : '>';
+            var align = match[1] === '-' ? '<' : '>';
             try {
                 length = parseInt(match[2]);
             } catch(err) {
@@ -94,7 +94,7 @@ function tokenizeStatement(value) {
 
             pushToken({
                 type: TOKENS.Lf,
-                fill: fill,
+                align: align,
                 length: isNaN(length) ? null : length,
                 precision: isNaN(precision) ? null : precision
             });
@@ -267,8 +267,8 @@ function renderStatement(statement, series, renderer) {
             }
 
             var format = "";
-            if (token.fill !== null) {
-                format += token.fill;
+            if (token.align !== null) {
+                format += token.align;
             }
             if (token.length !== null) {
                 format += token.length;
